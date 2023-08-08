@@ -34,13 +34,21 @@ const ToDoList = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     if (objet.objet.trim() !== "") {
-      setObjet2((prevObjet) => [...prevObjet, objet.objet]);
+      setObjet2((prevObjet) => [...prevObjet, { text: objet.objet, strikethrough: false }]);
       setObjet({ objet: "" });
     }
   };
 
-  const handleDelete = (index, newValue) => {
-    setObjet2((prevObjet) => prevObjet.filter((_, i) => i !== index));
+  const handleDelete = (index) => {
+    setObjet2((prevObjet) => {
+      const updatedObjet = prevObjet.map((item, i) => {
+        if (i === index) {
+          return { ...item, strikethrough: !item.strikethrough };
+        }
+        return item;
+      });
+      return updatedObjet;
+    });
   };
 
   const handleUpdate = (event) => {
@@ -63,12 +71,14 @@ const ToDoList = () => {
         <button>Ajouter</button>
       </form>
       <ul>
-        {objet2.map((UnObjet2, index) => (
-          <li key={index}>
-            {UnObjet2}
-            <button onClick={() => handleDelete(index)}>Supprimer</button>
-          </li>
-        ))}
+       {objet2.map((UnObjet2, index) => (
+    <li key={index}>
+      <span style={{ textDecoration: UnObjet2.strikethrough ? "line-through" : "none" }}>
+        {UnObjet2.text} {/* Utilisez la propriété 'text' de l'objet */}
+      </span>
+      <button onClick={() => handleDelete(index)}>Supprimer</button>
+    </li>
+  ))}
       </ul>
     </div>
   );
